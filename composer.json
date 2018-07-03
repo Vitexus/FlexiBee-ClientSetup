@@ -1,0 +1,14 @@
+{
+    "name": "vitexsoftware/inital-setup",
+    "description": "Description of project InitalSetup.",
+    "authors": [
+        {
+            "name": "Vitex",
+            "email": "info@vitexsoftware.cz"
+        }
+    ],
+    "require": {
+        "vitexsoftware/flexipeehp-bricks": "dev-master",
+        "vitexsoftware/ease-bricks": "dev-master"
+    }
+}
