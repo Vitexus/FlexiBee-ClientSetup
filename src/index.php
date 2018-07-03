@@ -10,10 +10,27 @@ $defconf = '/etc/flexibee/client.json';
 
 \Ease\Shared::instanced()->loadConfig($defconf);
 
-
 $prober = new \FlexiPeeHP\ui\StatusInfoBox(null, $_REQUEST);
 
+$configRaw = $prober->getConnectionOptions();
+
 $oPage = new \Ease\TWB\WebPage(_('Initial Setup'));
+
+if ($oPage->isPosted() && ( $prober->lastResponseCode == 200)) {
+    $config = [
+        'FLEXIBEE_URL' => $configRaw['url'],
+        'FLEXIBEE_USER' => $configRaw['user'],
+        'FLEXIBEE_PASSWORD' => $configRaw['password'],
+        'FLEXIBEE_COMPANY' => $configRaw['company']
+    ];
+    if (file_put_contents($defconf, json_encode($config, JSON_PRETTY_PRINT))) {
+        $prober->addStatusMessage(sprintf(_('Configuration was saved to %s.'),
+                $defconf), 'success');
+    } else {
+        $prober->addStatusMessage(sprintf(_('Configuration was not saved to %s.'),
+                $defconf), 'error');
+    }
+}
 
 $connForm = new FlexiPeeHP\ui\ConnectionForm();
 if ($oPage->isPosted()) {
@@ -24,22 +41,14 @@ if ($oPage->isPosted()) {
 
 $container = $oPage->addItem(new \Ease\TWB\Container());
 
+$panelRow =  new \Ease\TWB\Row();
+$panelRow->addColumn(6, $connForm);
+$col2 = $panelRow->addColumn(6, new \Ease\TWB\Well($prober));
+$col2->addItem(new \Ease\Html\PreTag(file_get_contents($defconf)));
+
 $panel = $container->addItem(new Ease\TWB\Panel(_('Setup FlexiBee server'),
-    'success', $connForm, $oPage->getStatusMessagesAsHtml()));
-$panel->addItem(new Ease\Html\DivTag('<br>'));
-$panel->addItem(new \Ease\TWB\Well($prober));
+    'success', $panelRow, $oPage->getStatusMessagesAsHtml()));
 
-$configRaw = $prober->getConnectionOptions();
-
-$config = [
-    'FLEXIBEE_URL' => $configRaw['url'],
-    'FLEXIBEE_USER' => $configRaw['user'],
-    'FLEXIBEE_PASSWORD' => $configRaw['password'],
-    'FLEXIBEE_COMPANY' => $configRaw['company']
-];
-
-$panel->addItem(new \Ease\Html\PreTag(json_encode($config, JSON_PRETTY_PRINT)));
-
+$panel->addItem();
 
 $oPage->draw();
-

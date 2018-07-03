@@ -14,6 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y  install apache2 libapache2-mod-ph
 RUN rm -f /var/www/html/index.html
 COPY src/ /var/www/html/
 RUN ln -s /var/www/html/ /var/www/src
+RUN chown www-data /etc/flexibee/client.json
 COPY debian/composer.json /var/www/composer.json
 
 RUN composer install --no-dev --no-plugins --no-scripts  -d /var/www/

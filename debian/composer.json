@@ -9,7 +9,8 @@
     ],
     "require": {
         "flexipeehp": "*",
-        "ease-framework": "*"
+        "ease-framework": "*",
+        "flexipeehp-bricks": "*"
     },
     "repositories": [
         {
